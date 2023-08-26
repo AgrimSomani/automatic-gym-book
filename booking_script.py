@@ -140,18 +140,18 @@ def main(name,email,uid,date,time_to_book):
 
 if __name__ == "__main__":
     import sys
-    
     # Check if the correct number of arguments is provided
-    if len(sys.argv) < 7:
+    if len(sys.argv) < 6:
         print(f"Usage: python booking_script.py <name> <email> <uid> <date> <time>, {7-len(sys.argv)} arguments not provided!")
-    elif len(sys.argv) > 7:
+    elif len(sys.argv) > 6:
         print(f"Usage: python booking_script.py <name> <email> <uid> <date> <time>, {len(sys.argv)-7} extra arguments provided!")
     else:
-        name = sys.argv[2]
-        email = sys.argv[3]
-        uid = sys.argv[4]
-        date_str = int(sys.argv[5])
-        time_int = int(sys.argv[6])
+        
+        name = sys.argv[1]
+        email = sys.argv[2]
+        uid = sys.argv[3]
+        date_str = int(sys.argv[4])
+        time_int = int(sys.argv[5])
         main(name, email, uid, date_str, time_int)
 
 
