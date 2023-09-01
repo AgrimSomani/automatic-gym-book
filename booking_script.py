@@ -6,15 +6,22 @@ from anticaptchaofficial.recaptchav2proxyless import *
 from dotenv import load_dotenv
 import os
 
+
 load_dotenv()
 
 def is_option_enabled(option_element):
     return not option_element.get_attribute('disabled')
 
-def select_date(date:int,date_field):
+def select_date(date,date_field):
     try:
         select = Select(date_field)
-        select.select_by_index(date-1)
+        date_mapping = {
+            "Today": 0,
+            "Tomorrow": 1,
+            "Day After Tomorrow": 2,
+            "2 Days After Tomorrow": 3,
+        }
+        select.select_by_index(date_mapping[date])
         return True
     except:
         print('Cannot book for that date yet.')
@@ -43,13 +50,9 @@ def set_user_info(name_field,email_field,uid_field,name,email, uid):
 
 def select_time(time_field,time_to_book):
     option_elements = time_field.find_elements(By.TAG_NAME, 'option')
-    time_mapping = {
-        1: '1700',  # Adjust the actual times as needed
-        2: '1845',
-        3: '2030'
-    }
+
     for option in option_elements:
-        if option.text.startswith(time_mapping[time_to_book]) and is_option_enabled(option):
+        if option.text.startswith(time_to_book[:2]) and is_option_enabled(option):
             option.click()
             return True
     return False
@@ -105,7 +108,7 @@ def confirm_data_privacy_handler(declare_field,driver):
     driver.execute_script("arguments[0].style.pointerEvents = 'auto';", declare_field)
     declare_field.click()
 
-def main(name,email,uid,date,time_to_book):
+def main(name,email,uid,date,time_to_book,output_text):
 
     url = 'https://fcbooking.cse.hku.hk/Form/SignUpPS?CenterID=10002&Date=2023%2F08%2F21&HourID=10125'
 
@@ -121,20 +124,28 @@ def main(name,email,uid,date,time_to_book):
         name_field,email_field,uid_field,date_field,time_field,center_field,declare_field,submit_button = get_fields(driver)
 
         if not select_date(date,date_field):
+            output_text.text('Cant book for this date!')
             return
 
         if select_time(time_field,time_to_book):
+            output_text.text("Time Selected.")
+            time.sleep(1.5)
             set_user_info(name_field,email_field,uid_field,name,email,uid)
+            output_text.text('User info set')
             time.sleep(3)
             confirm_data_privacy_handler(declare_field,driver)
+            output_text.text('Ticked privacy checkbox')
             time.sleep(3)
+            output_text.text('Solving recaptcha')
             if recaptcha_handler(driver,solver):
                 time.sleep(1)
                 submit_button.click()
                 if not recaptcha_wrong(driver,url):
+                    output_text.text('Booked! Check your email.')
                     return
             driver.refresh()
         else:
+            output_text.text('No slots avaialble, will look again in 10 seconds.')
             time.sleep(10)
             driver.refresh()
 
