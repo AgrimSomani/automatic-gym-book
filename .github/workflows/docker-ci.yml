@@ -24,4 +24,4 @@ jobs:
         run: docker build -t automate-gym:${{ github.sha }} .
 
       - name: Push Docker image
-        run: docker push ${{secrets.DOCKER_USERNAME}}/automate-gym-booking
+        run: docker push agrimsomani/automate-gym-booking:latest
