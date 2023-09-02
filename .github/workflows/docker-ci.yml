@@ -25,10 +25,16 @@ jobs:
         with:
           images: ${{ secrets.DOCKER_USERNAME }}/automate-gym-booking
 
-      - name: Substitute environment variables in Dockerfile
+      - name: Add Container Environment Variables
         run: |
-          cat Dockerfile | envsubst > Dockerfile.envsubst
-          mv Dockerfile.envsubst Dockerfile
+          # Define the new SOLVER_KEY value
+          NEW_SOLVER_KEY=${{ secrets.SOLVER_KEY }}
+
+          # Use sed to replace the ENV SOLVER_KEY line in the Dockerfile
+          sed -i "s/^ENV SOLVER_KEY=.*/ENV SOLVER_KEY='$NEW_SOLVER_KEY'/g" Dockerfile
+
+          # Display the modified Dockerfile
+          cat Dockerfile
 
       - name: Build and push Docker image
         uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
