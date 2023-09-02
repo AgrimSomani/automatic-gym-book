@@ -1,6 +1,4 @@
-ARG PYTHON_VERSION=3.11.0
-
-FROM python:${PYTHON_VERSION}
+FROM python:3.11.4-slim-buster
 
 WORKDIR /app
 
