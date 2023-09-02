@@ -7,7 +7,7 @@ COPY ./requirements.txt ./requirements.txt
 
 RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
-ENV SOLVER_KEY=aced54bd168c720622d17081f2379317
+ENV SOLVER_KEY
 
 COPY . .
 
@@ -16,5 +16,4 @@ EXPOSE 8501
 
 # Run the application.
 CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
-
 
